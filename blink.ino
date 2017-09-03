@@ -19,7 +19,7 @@ void setup()
   pinMode(ledPinBlue,OUTPUT);    
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-  Serial.begin(9600);
+  Serial.begin(600);
 }
  
 void loop() 

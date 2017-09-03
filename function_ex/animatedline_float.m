@@ -1,3 +1,5 @@
+% Float input
+
 % Fast animated line reading from sensor 
 
 clear all
