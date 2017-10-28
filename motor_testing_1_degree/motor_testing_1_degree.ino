@@ -7,6 +7,9 @@ int state;
 void setup() {                
   pinMode(8, OUTPUT);
   pinMode(9, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
   digitalWrite(8, LOW);
   digitalWrite(9, LOW);
   digitalWrite(5,LOW);
@@ -22,10 +25,7 @@ void loop() {
       user_input = Serial.read(); //Read user input and trigger appropriate function
       if (user_input =='9')
       {
-        for (int i=1;i<16;i++)
-        {
          test123();
-        }
       }
 }
 }
