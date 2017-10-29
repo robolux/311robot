@@ -1,8 +1,4 @@
 char user_input;
-int x;
-int y;
-int state;
-
 
 void setup() {                
   pinMode(2, OUTPUT);
@@ -27,7 +23,7 @@ void loop() {
       {
          test123();
       }
-}
+	}
 }
 
 void test123()
