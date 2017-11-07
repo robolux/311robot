@@ -1,8 +1,9 @@
-% Fast animated line reading from sensor 
+
 
 clear all
 clc
 
+answer=1; 
 trip = 2;
 w=0;
 data2 = [];
@@ -28,10 +29,14 @@ while(1)
     data_converted = [data_char(9) data_char(10) data_char(7) data_char(8) data_char(5) data_char(6) data_char(3) data_char(4)];
     value = [value; hexsingle2num(data_converted)];
     flexR = v2r(value(w));
-    map_value = map(flexR,1.924839956809012e+04,1.447172080408447e+04,0.0,90.0)
+    map_value = map(flexR,13213.39,47393.18,0.0,90.0)
     [x_c,y_c] = pol2cart(map_value*(pi/180),1);
     comp = compass(x_c,y_c);
     ylim([0 1])
+    if mod(w,25)==0
+        answer=input('Enter led value 1,2, or 3:   '); % ask user to enter value for variable answer
+        fprintf(arduino,'%s',char(answer)); % send answer variable content to arduino
+    end
     drawnow update
 end
 

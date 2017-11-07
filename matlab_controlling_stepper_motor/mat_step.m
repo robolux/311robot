@@ -2,7 +2,7 @@ clear all
 clc
  
 answer=1; 
-arduino=serial('COM3','BaudRate',600);
+arduino=serial('COM4','BaudRate',600);
  
 fopen(arduino); % initiate arduino communication
  
