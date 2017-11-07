@@ -16,7 +16,6 @@ end
 invoke(Excel.Workbooks,'Open',File); % open the invoked Excel workbook
 
 mean_angle=90;  % since our testing will start at 90 degrees I need an initial mean set
-user_dec=1;     % user decision init
 trip = 2;       % dummy var
 w=0;            % need w for assigning positions in arrays during while loop
 data2 = [];     % init data 2 to null matrix
@@ -57,13 +56,10 @@ while(1)            % infinite loop
     ylim([0 1])                                                                     % only show top half of plot
     if mod(w,250)==0                                                                % every ~250 measurements ask user for input
         fprintf('Mean Angle Measurement : %.2f\n\n',mean(mean_angle))               % Show user the mean of the ~250 measurements
-        user_dec=input('Enter 1 to move stepper motor\nEnter 2 to take more data points at current position\nEnter 3 to end testing : '); % ask user to enter value for choice
-        if user_dec == 3 % if they pick 3
+        user_dec=input('Enter 1 to take data points at position\nEnter 2 to end testing : '); % ask user to enter value for choice
+        if user_dec == 2 % if they pick 3
             break        % exit loop and shutdown processes
         end
-        fprintf(arduino,'%s',char(user_dec)); % send user_dec to arduino
-        pause(1)
-        fprintf(arduino,'%s',char(user_dec));
     end
     drawnow update % force the figure to update even if OPENGL denies it due to timing
 end

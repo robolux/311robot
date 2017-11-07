@@ -16,9 +16,6 @@
 
 ads1262 PC_ADS1262;                     // class
 
-char user_input;
-int matlabData;
-
 float volt_V=0;
 float volt_mV=0;
 volatile int i;
@@ -39,16 +36,6 @@ bool direct_step = HIGH;
 
 void setup() 
 {
-  pinMode(2, OUTPUT);   // DIR pin on stepper motor driver
-  pinMode(8, OUTPUT);   // STEP pin on stepper motor driver
-  pinMode(A0, OUTPUT);  // MS1
-  pinMode(A1, OUTPUT);  // MS2
-  pinMode(A2, OUTPUT);  // MS3
-  digitalWrite(2, direct_step); // set the direction to the init state of high
-  digitalWrite(8, LOW);         
-  digitalWrite(A0,0);           // these pins all driven LOW will cause a full-step mode to activate
-  digitalWrite(A1,0);
-  digitalWrite(A2,0);
   // initalize the  data ready and chip select pins:
   pinMode(ADS1262_DRDY_PIN, INPUT);                  // data ready input line
   pinMode(ADS1262_CS_PIN, OUTPUT);                   // chip enable output line
@@ -63,20 +50,7 @@ void setup()
 void loop() 
 {
   volatile int i,data; // init data for 32-bit adc
-
-  if(Serial.available()>0) // if there is data to read
-   {
-    matlabData=Serial.read(); // read data
-
-    switch(matlabData) {      
-      case 1: {               // if user returns a value of 1
-        full_step();          // move one step
-        break;
-      }
-      }
-    }
   
-
   
  if((digitalRead(ADS1262_DRDY_PIN)) == LOW)               // monitor Data ready(DRDY pin)
   {  
@@ -131,12 +105,4 @@ void serialFloatPrint(float f) {
     Serial.print(c1);                                     // prints the encoded hex to the serial line
     Serial.print(c2);
   }
-}
-
-void full_step()
-{
-    digitalWrite(8, HIGH); // stepper motor transition sequence for a full step
-    delay(1);          
-    digitalWrite(8,LOW); 
-    delay(1);    
 }
