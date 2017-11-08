@@ -20,7 +20,7 @@ w=0;
 data2 = [];
 value = [];
 x=1:100000;
-arduino=serial('COM3','BaudRate',600);
+arduino=serial('COM4','BaudRate',1200);
 
 view([-55.1 41.2]);
 y = [];
