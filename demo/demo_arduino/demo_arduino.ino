@@ -27,10 +27,6 @@ volatile int Responsebyte = false;
 volatile signed long sads1262Count = 0;
 volatile signed long uads1262Count = 0;
 double resolution;
-// const float VCC = 4.096 // Measured voltage of Ardunio 5V line
-// const float R_DIV = 46880.0; // Measured resistance of 47k resistor
-// const float STRAIGHT_RESISTANCE = 13213.39; // resistance when straight
-// const float BEND_RESISTANCE = 47393.18; // resistance at 90 deg
 bool direct_step = HIGH;
 
 
@@ -52,7 +48,7 @@ void loop()
   volatile int i,data; // init data for 32-bit adc
   
   
- if((digitalRead(ADS1262_DRDY_PIN)) == LOW)               // monitor Data ready(DRDY pin)
+ if((digitalRead(ADS1262_DRDY_PIN)) == LOW)                // monitor Data ready(DRDY pin)
   {  
     SPI_RX_Buff_Ptr = PC_ADS1262.ads1262_Read_Data();      // read 6 bytes conversion register
     Responsebyte = true ; 
@@ -71,7 +67,7 @@ void loop()
   {     
 
 
-    ads1262_rx_Data[0]= (unsigned char)SPI_RX_Buff[1];  // read 4 bytes adc count
+    ads1262_rx_Data[0]= (unsigned char)SPI_RX_Buff[1];    // read 4 bytes adc count
     ads1262_rx_Data[1]= (unsigned char)SPI_RX_Buff[2];
     ads1262_rx_Data[2]= (unsigned char)SPI_RX_Buff[3];
     ads1262_rx_Data[3]= (unsigned char)SPI_RX_Buff[4];
@@ -88,7 +84,6 @@ void loop()
    }
     
   SPI_RX_Buff_Count = 0;
-  //delay(1000);
 }
 
 void serialFloatPrint(float f) {

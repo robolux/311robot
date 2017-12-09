@@ -22,7 +22,7 @@ data2 = [];     % init data 2 to null matrix
 value = [];     % initi value to null matrix
 figure('units','normalized','outerposition',[0 0 1 1])  % setup the figure
 comp = compass(1,1);                        % compass graph
-arduino=serial('COM4','BaudRate',1200);     % open up the com port for the arduino
+arduino=serial('/dev/tty.usbmodem1421','BaudRate',1200);     % open up the com port for the arduino
 fopen(arduino);                             % at a baud rate of 1200
 
 while(trip~=102)            % the first bytes before 102 of information need
