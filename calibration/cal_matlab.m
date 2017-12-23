@@ -5,9 +5,14 @@
 clear all
 clc
 
+% TEST NUMBER - CHANGE EACH CALIBRATION SEQUENCE
+cal_name = 'test9.xls';
+File = 'C:\Users\robolux\Desktop\311robot\calibration\test9.xls';
+
 % Setup Excel X Server 
 Excel = actxserver ('Excel.Application'); 
-File='C:\Users\robolux\Desktop\311robot\demo\test1.xls'; 
+% File='C:\Users\robolux\Desktop\311robot\calibration\caldata\test4.xls';
+% File=strcat('C:\Users\robolux\Desktop\311robot\calibration\caldata\',cal_name); 
 if ~exist(File,'file') 
 ExcelWorkbook = Excel.workbooks.Add; 
 ExcelWorkbook.SaveAs(File,1); 
@@ -15,13 +20,15 @@ ExcelWorkbook.Close(false);
 end 
 invoke(Excel.Workbooks,'Open',File); % open the invoked Excel workbook
 
-mean_angle=[];  % init mean_angle
+mapc = @(x) 4.2619958863*(10^(-10))*x^3 - 2.1440571377*(10^(-5))*x^2 + 3.3771916419*(10^(-1))*x - 1.5811722057*(10^(3));
+
+% mean_angle=[];  % init mean_angle
 trip = 2;       % dummy var
 w=0;            % need w for assigning positions in arrays during while loop
 data2 = [];     % init data 2 to null matrix
 value = [];     % initi value to null matrix
-figure('units','normalized','outerposition',[0 0 1 1])  % setup the figure
-comp = compass(1,1);                        % compass graph
+% figure('units','normalized','outerposition',[0 0 1 1])  % setup the figure
+% comp = compass(1,1);                        % compass graph
 arduino=serial('COM4','BaudRate',1200);     % open up the com port for the arduino
 fopen(arduino);                             % at a baud rate of 1200
 
@@ -32,38 +39,34 @@ end                         % they contain unreadable characters / symbols
 data = 102;                                 % Read one more byte chain 
 data = [data; fread(arduino,11,'char')];    % and dump the data into a dummy var
                                             % it should be valid, however ensures that proper flushing occurs 
-                                            
-mapc = @(x) 4.2619958863*(10^(-10))*x^3 - 2.1440571377*(10^(-5))*x^2 + 3.3771916419*(10^(-1))*x - 1.5811722057*(10^(3));
                                         
 while(1)            % infinite loop
-    delete(comp)    % every iteration need to delete the old arrow from compass plot -> for speed
+    % delete(comp)    % every iteration need to delete the old arrow from compass plot -> for speed
     w=w+1;          % iterate for array assignment advancement
     data2 = fread(arduino,12,'char');   % get data from serial com
     data_char = char(data2);            % ASCII is converted from raw data chain
     data_converted = [data_char(9) data_char(10) data_char(7) data_char(8) data_char(5) data_char(6) data_char(3) data_char(4)];
-    value = hexsingle2num(data_converted); % data comes in backwards and needs to be rearranged and converted 
-                                           % from single precision IEEE hexadecimal string to number
+    value = hexsingle2num(data_converted); % data comes in backwards and needs to be rearranged and converted from single precision IEEE hexadecimal string to number
     flexR = v2r(value);                    % value is in form of voltage, need to convert it to a resistance
-    map_value = mapc(flexR);    % map the 0 - 90 degree angles to the straight and bent corresponding resistance values using cal curve
+    map_value = mapc(flexR)
     
     data_point = sprintf('A%s',num2str(w));
     v_col = sprintf('B%s',num2str(w));
     r_col = sprintf('C%s',num2str(w));
     a_col = sprintf('D%s',num2str(w));
-    xlswrite1('test1.xls',w,1,data_point)       % record data point number
-    xlswrite1('test1.xls',value,1,v_col)        % record voltage
-    xlswrite1('test1.xls',flexR,1,r_col)        % record resistance
-    xlswrite1('test1.xls',map_value,1,a_col)    % record angle
+    xlswrite1(cal_name,w,1,data_point)       % record data point number
+    xlswrite1(cal_name,value,1,v_col)        % record voltage
+    xlswrite1(cal_name,flexR,1,r_col)        % record resistance
+    xlswrite1(cal_name,map_value,1,a_col)    % record angle
     
-    mean_angle = [mean_angle, map_value];                                           % get the mean angle values stored from the measurements
-    [x_c,y_c] = pol2cart(map_value*(pi/180),1);                                     % convert angle value from polar to cartesian cord. 
-    comp = compass(x_c,y_c);                                                        % create compass polt with angle
-    ylim([0 1])                                                                     % only show top half of plot
-    if mod(w,250)==0                                                                % every ~100 measurements ask user for input
-        fprintf('Mean Angle Measurement : %.2f\n\n',mean(mean_angle))               % Show user the mean of the ~250 measurements
-        mean_angle = [];
-        user_dec=input('\n\nEnter 1 to increment the position of the stepper motor\nEnter 2 to take data points at position\nEnter 3 to end testing : '); 
-                                                                                    % ask user to enter value for choice
+    % mean_angle = [mean_angle, map_value];                                           % get the mean angle values stored from the measurements
+    % [x_c,y_c] = pol2cart(map_value*(pi/180),1);                                     % convert angle value from polar to cartesian cord. 
+    % comp = compass(x_c,y_c);                                                        % create compass polt with angle
+    % ylim([0 1])                                                                     % only show top half of plot
+    if mod(w,100)==0                                                                % every ~100 measurements ask user for input
+        % fprintf('Mean Angle Measurement : %.2f\n\n',mean(mean_angle))               % Show user the mean of the ~250 measurements
+        % mean_angle = [];
+        user_dec=input('\n\nEnter 1 to increment the position of the stepper motor\nEnter 2 to take data points at position\nEnter 3 to end testing : '); % ask user to enter value for choice
         if user_dec == 3 % if they pick 3
             break        % exit loop and shutdown processes
         end
@@ -75,7 +78,7 @@ while(1)            % infinite loop
         fclose(arduino);
         fopen(arduino);                       
     end
-    drawnow update % force the figure to update even if OPENGL denies it due to timing
+    % drawnow update % force the figure to update even if OPENGL denies it due to timing
 end
 
 fclose(arduino); % close arduino
@@ -85,4 +88,5 @@ invoke(Excel.ActiveWorkbook,'Save');
 Excel.Quit 
 Excel.delete 
 clear Excel
+
 

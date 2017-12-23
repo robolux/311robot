@@ -26,6 +26,8 @@ while(trip~=102)
 end
 data = 102;
 data = [data; fread(arduino,11,'char')];
+
+
 while(1)
     w=w+1;
     data2 = fread(arduino,12,'char');
@@ -36,7 +38,6 @@ while(1)
     delete(h3); 
     delete(h2);
     h1 = plot3(x2,value,-1*ones(length(x2)));
-    % delete(h1)
     hold on
     xl = xlim;
     h2 = plot3(xl(2)*ones(length(x2)),x2,value);
